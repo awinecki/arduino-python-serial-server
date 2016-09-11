@@ -24,63 +24,59 @@ led2 = RGBLed('two', commander, loop)
 simple_led = SimpleLed('smallRed', commander, loop)
 bz = Buzzer('buzz', commander)
 
-# simple_led.start_pulse()
-# led1.blink(0, 0, 200, 5, .1)
+state = {}
+
+def handle_state(state, prev_state):
+    print(state)
 
 
-# state = {}
-#
-# def handle_state(state, prev_state):
-#     print(state)
-#
-#
-# async def fetch_state(loop):
-#     async with aiohttp.ClientSession(loop=loop) as session:
-#         async with session.get('%s/state' % API_URL) as response:
-#             return await response.json()
-#
-#
-# async def check_state(loop):
-#     global state
-#     try:
-#         while True:
-#             new_state = await fetch_state(loop)
-#             if not state:
-#                 state = new_state
-#
-#             print(state)
-#
-#             if new_state.get('deploying_prod') and \
-#                     not state.get('deploying_prod'):
-#                 print('startdeploy')
-#                 led1.stop()
-#                 led1.pulse(240, 0, 'pulse')
-#             if not new_state.get('deploying_prod') and \
-#                     state.get('deploying_prod'):
-#                 print('enddeploy')
-#                 led1.stop()
-#                 led1.blink(0, 200, 0, 5, .20)
-#
-#             if new_state.get('deploying_stage') and \
-#                     not state.get('deploying_stage'):
-#                 print('startdeploy')
-#                 led2.stop()
-#                 led2.pulse(0, 0, 'pulse')
-#             if not new_state.get('deploying_stage') and \
-#                     state.get('deploying_stage'):
-#                 print('enddeploy')
-#                 led2.stop()
-#                 led2.blink(0, 200, 0, 5, .20)
-#
-#             state = new_state
-#             await asyncio.sleep(1)
-#     except asyncio.CancelledError:
-#         print('Fetch state cancelled.')
-#
-#
-# state_task = asyncio.ensure_future(check_state(loop))
-#
-#
+async def fetch_state(loop):
+    async with aiohttp.ClientSession(loop=loop) as session:
+        async with session.get('%s/state' % API_URL) as response:
+            return await response.json()
+
+
+async def check_state(loop):
+    global state
+    try:
+        while True:
+            new_state = await fetch_state(loop)
+            if not state:
+                state = new_state
+
+            print(state)
+
+            if new_state.get('deploying_prod') and \
+                    not state.get('deploying_prod'):
+                print('startdeploy')
+                led1.stop()
+                led1.pulse(240, 0, 'pulse')
+            if not new_state.get('deploying_prod') and \
+                    state.get('deploying_prod'):
+                print('enddeploy')
+                led1.stop()
+                led1.blink(0, 200, 0, 5, .20)
+
+            if new_state.get('deploying_stage') and \
+                    not state.get('deploying_stage'):
+                print('startdeploy')
+                led2.stop()
+                led2.pulse(0, 0, 'pulse')
+            if not new_state.get('deploying_stage') and \
+                    state.get('deploying_stage'):
+                print('enddeploy')
+                led2.stop()
+                led2.blink(0, 200, 0, 5, .20)
+
+            state = new_state
+            await asyncio.sleep(1)
+    except asyncio.CancelledError:
+        print('Fetch state cancelled.')
+
+
+state_task = asyncio.ensure_future(check_state(loop))
+
+
 def exit():
     led1.stop()
     # simple_led.stop()
