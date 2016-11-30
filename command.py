@@ -16,7 +16,9 @@ import serial
 from time import sleep
 from subprocess import call
 
-ino = serial.Serial('/dev/cu.usbmodem1421', 9600)
+SERIAL_PORT = '/dev/cu.usbmodem14131'
+
+ino = serial.Serial(SERIAL_PORT, 9600)
 # ino.flushInput()
 
 # sleep(1)

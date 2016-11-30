@@ -9,7 +9,9 @@ from multiprocessing.connection import Listener
 log = logging.getLogger('INO Command listener')
 coloredlogs.install(level='DEBUG')
 
-ino = serial.Serial('/dev/cu.usbmodem14221', 9600)
+SERIAL_PORT = '/dev/cu.usbmodem14131'
+
+ino = serial.Serial(SERIAL_PORT, 9600)
 address = ('localhost', 6000)
 listener = Listener(address, authkey=b'qweqwe')
 log.info('Started. Ready to accept commands')
